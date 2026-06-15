@@ -1,6 +1,11 @@
 import { ethers } from 'ethers';
 
 // Contract ABI - This would be generated after compiling the smart contract
+//Solidity is the programming language used to write smart contracts (small programs that live on the blockchain)
+//This is like a mini database on the blockchain that ensures:
+//Hashes are stored immutably.
+//Once marked as used → can’t be reused.
+//Solidity = Code that defines the logic on blockchain.
 const CONTRACT_ABI = [
   "function createPrescription(string memory prescriptionHash, address patientAddress) external",
   "function verifyPrescription(string memory prescriptionHash) external view returns (bool isValid, address doctorAddress, address patientAddress, uint256 timestamp, bool isUsed)",

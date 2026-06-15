@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
-import { QrCode, Camera, Upload, LogOut, Wallet, CheckCircle, AlertCircle, Shield } from "lucide-react";
+import { QrCode, Camera, Upload, LogOut, Wallet, CheckCircle, AlertCircle, Shield, ShieldCheck, Pill } from "lucide-react";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { db } from "../../firebaseConfig";
@@ -17,11 +17,11 @@ function PharmacyDash() {
   const [verificationResult, setVerificationResult] = useState(null);
   const [prescriptionData, setPrescriptionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  
+
   const scannerRef = useRef(null);
   const fileInputRef = useRef(null);
   const qrCodeRef = useRef(null);
-  
+
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -65,7 +65,7 @@ function PharmacyDash() {
       const account = web3Service.getCurrentAccount();
       setWalletAddress(account);
       setWalletConnected(true);
-      
+
       // Check if pharmacist is authorized
       const isAuthorized = await web3Service.isPharmacistAuthorized();
       setIsPharmacistAuthorized(isAuthorized);
@@ -77,12 +77,12 @@ function PharmacyDash() {
       const account = await web3Service.connectWallet();
       setWalletAddress(account);
       setWalletConnected(true);
-      
+
       // Check if pharmacist is authorized (gracefully handle if contract not deployed)
       try {
         const isAuthorized = await web3Service.isPharmacistAuthorized();
         setIsPharmacistAuthorized(isAuthorized);
-        
+
         if (!isAuthorized) {
           console.log("Wallet connected but not authorized as pharmacist in smart contract");
           console.log("This is normal if the smart contract is not deployed yet");
@@ -91,7 +91,7 @@ function PharmacyDash() {
         console.log("Authorization check failed - contract may not be deployed:", authError.message);
         setIsPharmacistAuthorized(false);
       }
-      
+
     } catch (error) {
       console.error("Error connecting wallet:", error);
       alert("Failed to connect wallet. Please try again.");
@@ -142,7 +142,7 @@ function PharmacyDash() {
       const hash = PrescriptionService.generatePrescriptionHash(decryptedData);
       let firebaseUsedStatus = false;
       let prescriptionDocId = null;
-      
+
       try {
         // Search for prescription in Firebase by hash
         const prescriptionsRef = collection(db, "prescriptions");
@@ -151,7 +151,7 @@ function PharmacyDash() {
           where("prescriptionHash", "==", hash)
         );
         const querySnapshot = await getDocs(q);
-        
+
         if (!querySnapshot.empty) {
           const prescriptionDoc = querySnapshot.docs[0];
           const prescriptionData = prescriptionDoc.data();
@@ -227,7 +227,7 @@ function PharmacyDash() {
       let prescriptionDocId = null;
       if (!querySnapshot.empty) {
         prescriptionDocId = querySnapshot.docs[0].id;
-        
+
         // Update Firebase document
         await updateDoc(doc(db, "prescriptions", prescriptionDocId), {
           isUsed: true,
@@ -270,216 +270,190 @@ function PharmacyDash() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header with Wallet Connection and Logout */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 glass-panel p-6 rounded-2xl">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-purple-500/20 rounded-xl">
+              <Pill className="h-6 w-6 text-purple-400" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-100">Pharmacist Portal</h1>
+              <p className="text-slate-400 text-sm">Verify prescriptions and dispense medicines</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
             {walletConnected ? (
-              <div className="flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-lg">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-sm">
+              <div className="flex items-center space-x-2 bg-purple-500/10 border border-purple-500/20 px-4 py-2 rounded-lg">
+                <CheckCircle className="w-4 h-4 text-purple-400" />
+                <span className="text-sm text-purple-300 font-mono">
                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </span>
                 {isPharmacistAuthorized && (
-                  <span className="text-xs bg-green-200 px-2 py-1 rounded">Authorized Pharmacist</span>
+                  <span className="ml-2 text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-full border border-purple-500/30">
+                    Authorized
+                  </span>
                 )}
               </div>
             ) : (
               <button
                 onClick={connectWallet}
-                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg transition-all"
               >
-                <Wallet className="w-4 h-4" />
+                <Wallet className="w-4 h-4 text-blue-400" />
                 <span>Connect Wallet</span>
               </button>
             )}
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 hover:bg-red-500/20 text-slate-400 hover:text-red-400 px-4 py-2 rounded-lg transition-all"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
           </div>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
         </div>
 
-        <div className="text-center mb-8">
-          <Shield className="h-12 w-12 text-green-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Prescription Verification
-          </h1>
-          <p className="text-gray-600">
-            Scan QR codes to verify prescription authenticity
-          </p>
-        </div>
+        {/* Main Content */}
+        <div className="glass-panel p-8 rounded-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center p-4 rounded-full bg-slate-800/50 mb-4 ring-1 ring-white/10">
+              <ShieldCheck className="w-8 h-8 text-emerald-400" />
+            </div>
+            <h2 className="text-2xl font-bold text-slate-100 mb-2">
+              Verify & Dispense
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto">
+              Scan patient's prescription QR code to verify authenticity and mark as dispensed.
+            </p>
+          </div>
 
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8">
-            {/* QR Code Scanner Section */}
-            <div className="mb-8">
-              <div className="flex items-center justify-center mb-6">
-                <QrCode className="w-8 h-8 text-green-600" />
-                <h2 className="text-2xl font-bold text-gray-800 ml-2">
-                  Scan Prescription QR Code
-                </h2>
+          {!isScanning && !scanResult && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto">
+              <button
+                onClick={startScanning}
+                className="flex flex-col items-center justify-center p-8 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800 transition-all group"
+              >
+                <Camera className="w-8 h-8 text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold text-slate-200">Start Camera</span>
+              </button>
+
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  ref={fileInputRef}
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center p-8 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-purple-500/50 hover:bg-slate-800 transition-all group cursor-pointer h-full"
+                >
+                  <Upload className="w-8 h-8 text-purple-400 mb-3 group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold text-slate-200">Upload QR Image</span>
+                </label>
               </div>
+            </div>
+          )}
 
-              {/* Scanner Container */}
-              {isScanning && <div id="reader" className="mb-4"></div>}
+          {/* Scanner Container */}
+          {isScanning && (
+            <div className="max-w-md mx-auto overflow-hidden rounded-xl border-2 border-slate-700 bg-black">
+              <div id="reader" className="w-full"></div>
+            </div>
+          )}
 
-              {!isScanning && !scanResult && (
-                <div className="space-y-4">
-                  <button
-                    onClick={startScanning}
-                    className="px-6 py-3 rounded-lg transition-colors flex items-center justify-center mx-auto w-full bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    <Camera className="w-5 h-5 mr-2" />
-                    Start Camera Scanning
-                  </button>
+          {/* Verification Spinner */}
+          {isVerifying && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-12 h-12 border-4 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin mb-4"></div>
+              <p className="text-emerald-300 font-medium animate-pulse">Verifying Prescription...</p>
+            </div>
+          )}
 
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      ref={fileInputRef}
-                      id="file-upload"
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="px-6 py-3 rounded-lg transition-colors flex items-center justify-center mx-auto w-full cursor-pointer bg-blue-600 hover:bg-blue-700 text-white"
-                    >
-                      <Upload className="w-5 h-5 mr-2" />
-                      Upload QR Image
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* Verification Status */}
-              {isVerifying && (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Verifying prescription...</p>
-                </div>
-              )}
-
-              {/* Verification Result */}
+          {/* Results Section */}
+          {(verificationResult || prescriptionData) && !isVerifying && (
+            <div className="mt-8 space-y-6 animate-fade-in">
               {verificationResult && (
-                <div className="mt-6 space-y-4">
-                  <div className={`p-6 rounded-lg border-2 ${
-                    verificationResult.isValid && !verificationResult.isUsed
-                      ? 'bg-green-50 border-green-200' 
-                      : verificationResult.isUsed
-                      ? 'bg-yellow-50 border-yellow-200'
-                      : 'bg-red-50 border-red-200'
+                <div className={`p-6 rounded-xl border ${verificationResult.isValid && !verificationResult.isUsed
+                    ? 'bg-emerald-500/10 border-emerald-500/20'
+                    : verificationResult.isUsed
+                      ? 'bg-yellow-500/10 border-yellow-500/20'
+                      : 'bg-red-500/10 border-red-500/20'
                   }`}>
-                    <div className="flex items-center space-x-2 mb-4">
-                      {verificationResult.isValid && !verificationResult.isUsed ? (
-                        <CheckCircle className="w-6 h-6 text-green-600" />
-                      ) : verificationResult.isUsed ? (
-                        <AlertCircle className="w-6 h-6 text-yellow-600" />
-                      ) : (
-                        <AlertCircle className="w-6 h-6 text-red-600" />
-                      )}
-                      <h3 className={`text-lg font-semibold ${
-                        verificationResult.isValid && !verificationResult.isUsed ? 'text-green-800' 
-                        : verificationResult.isUsed ? 'text-yellow-800' 
-                        : 'text-red-800'
-                      }`}>
-                        {verificationResult.isValid && !verificationResult.isUsed 
-                          ? 'Prescription Verified' 
-                          : verificationResult.isUsed 
-                          ? 'QR Code Already Scanned' 
-                          : 'Verification Failed'}
-                      </h3>
-                    </div>
-                    
+                  <div className="flex items-center gap-3 mb-4">
                     {verificationResult.isValid && !verificationResult.isUsed ? (
-                      <div className="space-y-2 text-green-700">
-                        <p><strong>Status:</strong> Valid</p>
-                        <p><strong>Doctor:</strong> {verificationResult.doctorAddress}</p>
-                        <p><strong>Timestamp:</strong> {new Date(verificationResult.timestamp * 1000).toLocaleString()}</p>
-                        <p><strong>Hash:</strong> {verificationResult.hash}</p>
-                        {verificationResult.note && (
-                          <p className="text-sm text-blue-600 mt-2">
-                            <strong>Note:</strong> {verificationResult.note}
-                          </p>
-                        )}
-                      </div>
+                      <CheckCircle className="w-8 h-8 text-emerald-400" />
                     ) : verificationResult.isUsed ? (
-                      <div className="space-y-2 text-yellow-700">
-                        <p><strong>Status:</strong> This prescription has already been used</p>
-                        <p><strong>Message:</strong> QR Code Already Scanned - This prescription cannot be used again</p>
-                        <p className="text-sm text-gray-600 mt-2">Note: Each prescription can only be used once to prevent fraud</p>
-                      </div>
+                      <AlertCircle className="w-8 h-8 text-yellow-400" />
                     ) : (
-                      <div className="text-red-700">
-                        <p><strong>Error:</strong> {verificationResult.error}</p>
-                      </div>
+                      <AlertCircle className="w-8 h-8 text-red-400" />
+                    )}
+                    <div>
+                      <h3 className={`text-xl font-bold ${verificationResult.isValid && !verificationResult.isUsed ? 'text-emerald-300'
+                          : verificationResult.isUsed ? 'text-yellow-300'
+                            : 'text-red-300'
+                        }`}>
+                        {verificationResult.isValid && !verificationResult.isUsed
+                          ? 'Prescription Verified'
+                          : verificationResult.isUsed
+                            ? 'QR Code Already Scanned'
+                            : 'Verification Failed'}
+                      </h3>
+                      <p className={`text-sm ${verificationResult.isValid && !verificationResult.isUsed ? 'text-emerald-400/80'
+                          : verificationResult.isUsed ? 'text-yellow-400/80'
+                            : 'text-red-400/80'
+                        }`}>
+                        {verificationResult.isValid && !verificationResult.isUsed
+                          ? 'Signature valid. Safe to dispense.'
+                          : verificationResult.isUsed
+                            ? 'This prescription has already been used.'
+                            : verificationResult.error}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-white/5 text-slate-300 text-sm">
+                    <p><strong>Hash:</strong> <span className="font-mono text-xs">{verificationResult.hash}</span></p>
+                    <p><strong>Doctor:</strong> <span className="font-mono text-xs">{verificationResult.doctorAddress}</span></p>
+                    <p><strong>Date:</strong> {new Date(verificationResult.timestamp * 1000).toLocaleString()}</p>
+                    {verificationResult.note && (
+                      <p className="text-blue-300"><strong>Note:</strong> {verificationResult.note}</p>
                     )}
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex justify-center space-x-4">
+                  {/* Actions */}
+                  <div className="flex flex-col sm:flex-row gap-4 mt-6">
                     <button
                       onClick={startScanning}
-                      className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center"
+                      className="flex-1 bg-slate-700 hover:bg-slate-600 text-white px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center font-medium"
                     >
                       <Camera className="w-5 h-5 mr-2" />
                       Scan Another
                     </button>
-                    
+
                     {verificationResult.isValid && !verificationResult.isUsed && (
                       <button
                         onClick={markPrescriptionAsUsed}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center justify-center"
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-lg transition-colors flex items-center justify-center font-medium shadow-lg shadow-emerald-900/20"
                       >
                         <CheckCircle className="w-5 h-5 mr-2" />
-                        Mark as Used {!verificationResult.verifiedOnBlockchain && '(Local Only)'}
+                        Dispense & Mark Used
                       </button>
                     )}
                   </div>
                 </div>
               )}
-
-              {/* Prescription Details */}
-              {prescriptionData && (
-                <div className="mt-6 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="text-lg font-semibold text-blue-800 mb-4">Prescription Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-blue-700">
-                    <div>
-                      <p><strong>Patient:</strong> {prescriptionData.patientInfo?.patientName}</p>
-                      <p><strong>Patient ID:</strong> {prescriptionData.patientInfo?.patientId}</p>
-                      <p><strong>Age:</strong> {prescriptionData.patientInfo?.patientAge}</p>
-                      <p><strong>Gender:</strong> {prescriptionData.patientInfo?.gender}</p>
-                    </div>
-                    <div>
-                      <p><strong>Doctor:</strong> {prescriptionData.patientInfo?.doctorName}</p>
-                      <p><strong>Date:</strong> {new Date(prescriptionData.timestamp).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <h4 className="font-semibold text-blue-800 mb-2">Medicines:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-blue-700">
-                      {prescriptionData.medicines?.map((medicine, index) => (
-                        <li key={index}>
-                          {medicine.name} - {medicine.duration}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
             </div>
+          )}
 
-            {/* Hidden element for file scanning */}
-            <div id="file-reader" style={{ display: "none" }}></div>
-          </div>
+          <div id="file-reader" style={{ display: "none" }}></div>
         </div>
       </div>
     </div>

@@ -6,7 +6,7 @@ const ENCRYPTION_KEY = 'prescription-verification-key-2024';
 
 class PrescriptionService {
   // Encrypt prescription data
-  static encryptPrescriptionData(data) {
+  static encryptPrescriptionData(data) { // AES-256 encryption
     try {
       const jsonString = JSON.stringify(data);
       const encrypted = CryptoJS.AES.encrypt(jsonString, ENCRYPTION_KEY).toString();
@@ -30,7 +30,7 @@ class PrescriptionService {
   }
 
   // Generate a unique hash for the prescription
-  static generatePrescriptionHash(prescriptionData) {
+  static generatePrescriptionHash(prescriptionData) { //SHA-256 HASH
     try {
       const dataString = JSON.stringify(prescriptionData);
       const hash = CryptoJS.SHA256(dataString).toString();

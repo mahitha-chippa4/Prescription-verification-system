@@ -1,185 +1,6 @@
-// import React, { useEffect, useState, useRef } from "react";
-// import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
-// import { QrCode, Camera, CameraOff, Upload } from "lucide-react";
-
-// function PatientDashBoard() {
-//   const [scanResult, setScanResult] = useState("");
-//   const [isScanning, setIsScanning] = useState(false);
-//   const scannerRef = useRef(null);
-//   const fileInputRef = useRef(null);
-//   const qrCodeRef = useRef(null);
-//   useEffect(() => {
-//     if (isScanning && !scannerRef.current) {
-//       // Initialize scanner only when scanning starts and scanner doesn't exist
-//       scannerRef.current = new Html5QrcodeScanner(
-//         "reader",
-//         {
-//           qrbox: {
-//             width: 250,
-//             height: 250,
-//           },
-//           fps: 5,
-//         },
-//         false
-//       );
-
-//       function success(result) {
-//         if (scannerRef.current) {
-//           scannerRef.current.clear();
-//           scannerRef.current = null;
-//         }
-//         setScanResult(result);
-//         setIsScanning(false);
-//       }
-
-//       function error(err) {
-//         console.warn(err);
-//       }
-
-//       scannerRef.current.render(success, error);
-//     }
-
-//     return () => {
-//       if (scannerRef.current) {
-//         scannerRef.current.clear();
-//         scannerRef.current = null;
-//       }
-//       if (qrCodeRef.current) {
-//         qrCodeRef.current.clear();
-//         qrCodeRef.current = null;
-//       }
-//     };
-//   }, [isScanning]);
-
-//   const startScanning = () => {
-//     setScanResult("");
-//     setIsScanning(true);
-//   };
-
-//   const stopScanning = () => {
-//     if (scannerRef.current) {
-//       scannerRef.current.clear();
-//       scannerRef.current = null;
-//     }
-//     setIsScanning(false);
-//   };
-
-//   const handleFileUpload = async (event) => {
-//     const file = event.target.files?.[0];
-//     if (!file) return;
-
-//     try {
-//       // Create a new instance for file scanning if it doesn't exist
-//       if (!qrCodeRef.current) {
-//         qrCodeRef.current = new Html5Qrcode("file-reader");
-//       }
-
-//       const result = await qrCodeRef.current.scanFile(file, true);
-//       setScanResult(result);
-
-//       // Clean up after successful scan
-//       if (qrCodeRef.current) {
-//         qrCodeRef.current.clear();
-//         qrCodeRef.current = null;
-//       }
-//     } catch (error) {
-//       console.error("Error scanning file:", error);
-//       alert(
-//         "Could not scan QR code from this image. Please try another image or use the camera scanner."
-//       );
-//     }
-
-//     // Reset file input
-//     if (fileInputRef.current) {
-//       fileInputRef.current.value = "";
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-gray-100 p-8">
-//       <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
-//         <div className="p-8">
-//           <div className="flex items-center justify-center mb-6">
-//             <QrCode className="w-8 h-8 text-blue-600" />
-//             <h1 className="text-2xl font-bold text-gray-800 ml-2">
-//               Upload Prescription QR Code
-//             </h1>
-//           </div>
-
-//           {/* QR Code Scanner Container */}
-//           {isScanning && <div id="reader" className="mb-4"></div>}
-
-//           {!isScanning && !scanResult && (
-//             <div className="space-y-4">
-//               <button
-//                 onClick={startScanning}
-//                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center mx-auto w-full"
-//               >
-//                 <Camera className="w-5 h-5 mr-2" />
-//                 Start Camera Scanning
-//               </button>
-
-//               <div className="relative">
-//                 <input
-//                   type="file"
-//                   accept="image/*"
-//                   onChange={handleFileUpload}
-//                   className="hidden"
-//                   ref={fileInputRef}
-//                   id="file-upload"
-//                 />
-//                 <label
-//                   htmlFor="file-upload"
-//                   className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center mx-auto w-full cursor-pointer"
-//                 >
-//                   <Upload className="w-5 h-5 mr-2" />
-//                   Upload QR Image
-//                 </label>
-//               </div>
-//             </div>
-//           )}
-
-//           {scanResult && (
-//             <div className="mt-6 space-y-4">
-//               <div className="p-4 bg-green-50 rounded-lg border border-green-200">
-//                 <h2 className="text-lg font-semibold text-green-800 mb-2">
-//                   Scan Result:
-//                 </h2>
-//                 <p className="text-green-700 break-all">{scanResult}</p>
-//               </div>
-//               <div className="grid grid-cols-2 gap-4">
-//                 <button
-//                   onClick={startScanning}
-//                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
-//                 >
-//                   <Camera className="w-5 h-5 mr-2" />
-//                   Scan Again
-//                 </button>
-//                 <label
-//                   htmlFor="file-upload"
-//                   className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center cursor-pointer"
-//                 >
-//                   <Upload className="w-5 h-5 mr-2" />
-//                   Upload New
-//                 </label>
-//               </div>
-//             </div>
-//           )}
-
-//           {/* Hidden element for file scanning */}
-//           <div id="file-reader" style={{ display: "none" }}></div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-// export default PatientDashBoard;
-
-
 import React, { useEffect, useState, useRef } from "react";
 import { Html5QrcodeScanner, Html5Qrcode } from "html5-qrcode";
-import { QrCode, Camera, Upload, LogOut, Wallet, CheckCircle, AlertCircle, User } from "lucide-react";
+import { QrCode, Camera, Upload, LogOut, Wallet, CheckCircle, AlertCircle, User, ShieldCheck } from "lucide-react";
 import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import web3Service from "../services/web3Service";
@@ -193,11 +14,11 @@ function PatientDashBoard() {
   const [verificationResult, setVerificationResult] = useState(null);
   const [prescriptionData, setPrescriptionData] = useState(null);
   const [isVerifying, setIsVerifying] = useState(false);
-  
+
   const scannerRef = useRef(null);
   const fileInputRef = useRef(null);
   const qrCodeRef = useRef(null);
-  
+
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -334,191 +155,224 @@ function PatientDashBoard() {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        alert("Logged out successfully!");
-        window.location.href = "/"; // Redirect to home or login page
+        navigate("/");
       })
       .catch((error) => console.error("Logout Error:", error));
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header with Wallet Connection and Logout */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
+    <div className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
+
+        {/* Header */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 glass-panel p-6 rounded-2xl">
+          <div className="flex items-center space-x-3">
+            <div className="p-3 bg-emerald-500/20 rounded-xl">
+              <User className="h-6 w-6 text-emerald-400" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-100">Patient Portal</h1>
+              <p className="text-slate-400 text-sm">View and manage your digital prescriptions</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
             {walletConnected ? (
-              <div className="flex items-center space-x-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-lg">
-                <CheckCircle className="w-4 h-4" />
-                <span className="text-sm">
+              <div className="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-lg">
+                <CheckCircle className="w-4 h-4 text-emerald-400" />
+                <span className="text-sm text-emerald-300 font-mono">
                   {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
                 </span>
               </div>
             ) : (
               <button
                 onClick={connectWallet}
-                className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                className="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2 rounded-lg transition-all"
               >
-                <Wallet className="w-4 h-4" />
-                <span>Connect Wallet (Optional)</span>
+                <Wallet className="w-4 h-4 text-blue-400" />
+                <span>Connect Wallet</span>
               </button>
             )}
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-2 hover:bg-red-500/20 text-slate-400 hover:text-red-400 px-4 py-2 rounded-lg transition-all"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Sign Out</span>
+            </button>
           </div>
-          
-          <button
-            onClick={handleLogout}
-            className="flex items-center space-x-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-          >
-            <LogOut className="w-4 h-4" />
-            <span>Logout</span>
-          </button>
         </div>
 
-        <div className="text-center mb-8">
-          <User className="h-12 w-12 text-purple-600 mx-auto mb-4" />
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            View Prescription
-          </h1>
-          <p className="text-gray-600">
-            Scan QR codes to view your prescription details
-          </p>
-        </div>
-
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8">
-            {/* QR Code Scanner Section */}
-            <div className="mb-8">
-              <div className="flex items-center justify-center mb-6">
-                <QrCode className="w-8 h-8 text-purple-600" />
-                <h2 className="text-2xl font-bold text-gray-800 ml-2">
-                  Scan Prescription QR Code
-                </h2>
-              </div>
-
-              {/* Scanner Container */}
-              {isScanning && <div id="reader" className="mb-4"></div>}
-
-              {!isScanning && !scanResult && (
-                <div className="space-y-4">
-                  <button
-                    onClick={startScanning}
-                    className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center w-full"
-                  >
-                    <Camera className="w-5 h-5 mr-2" />
-                    Start Camera Scanning
-                  </button>
-
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileUpload}
-                      className="hidden"
-                      ref={fileInputRef}
-                      id="file-upload"
-                    />
-                    <label
-                      htmlFor="file-upload"
-                      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 flex items-center justify-center w-full cursor-pointer"
-                    >
-                      <Upload className="w-5 h-5 mr-2" />
-                      Upload QR Image
-                    </label>
-                  </div>
-                </div>
-              )}
-
-              {/* Verification Status */}
-              {isVerifying && (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div>
-                  <p className="mt-4 text-gray-600">Processing prescription...</p>
-                </div>
-              )}
-
-              {/* Verification Result */}
-              {verificationResult && (
-                <div className="mt-6 space-y-4">
-                  <div className={`p-6 rounded-lg border-2 ${
-                    verificationResult.isValid 
-                      ? 'bg-green-50 border-green-200' 
-                      : 'bg-red-50 border-red-200'
-                  }`}>
-                    <div className="flex items-center space-x-2 mb-4">
-                      {verificationResult.isValid ? (
-                        <CheckCircle className="w-6 h-6 text-green-600" />
-                      ) : (
-                        <AlertCircle className="w-6 h-6 text-red-600" />
-                      )}
-                      <h3 className={`text-lg font-semibold ${
-                        verificationResult.isValid ? 'text-green-800' : 'text-red-800'
-                      }`}>
-                        {verificationResult.isValid ? 'Prescription Valid' : 'Invalid Prescription'}
-                      </h3>
-                    </div>
-                    
-                    {verificationResult.isValid ? (
-                      <div className="space-y-2 text-green-700">
-                        <p><strong>Status:</strong> {verificationResult.isUsed ? 'Already Used' : 'Valid'}</p>
-                        <p><strong>Doctor:</strong> {verificationResult.doctorAddress}</p>
-                        <p><strong>Timestamp:</strong> {new Date(verificationResult.timestamp * 1000).toLocaleString()}</p>
-                        {verificationResult.note && (
-                          <p className="text-sm text-blue-600"><strong>Note:</strong> {verificationResult.note}</p>
-                        )}
-                      </div>
-                    ) : (
-                      <div className="text-red-700">
-                        <p><strong>Error:</strong> {verificationResult.error}</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex justify-center">
-                    <button
-                      onClick={startScanning}
-                      className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 flex items-center justify-center"
-                    >
-                      <Camera className="w-5 h-5 mr-2" />
-                      Scan Another
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Prescription Details */}
-              {prescriptionData && (
-                <div className="mt-6 p-6 bg-blue-50 rounded-lg border border-blue-200">
-                  <h3 className="text-lg font-semibold text-blue-800 mb-4">Prescription Details</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-blue-700">
-                    <div>
-                      <p><strong>Patient:</strong> {prescriptionData.patientInfo?.patientName}</p>
-                      <p><strong>Patient ID:</strong> {prescriptionData.patientInfo?.patientId}</p>
-                      <p><strong>Age:</strong> {prescriptionData.patientInfo?.patientAge}</p>
-                      <p><strong>Gender:</strong> {prescriptionData.patientInfo?.gender}</p>
-                    </div>
-                    <div>
-                      <p><strong>Doctor:</strong> {prescriptionData.patientInfo?.doctorName}</p>
-                      <p><strong>Date:</strong> {new Date(prescriptionData.timestamp).toLocaleDateString()}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-4">
-                    <h4 className="font-semibold text-blue-800 mb-2">Medicines:</h4>
-                    <ul className="list-disc list-inside space-y-1 text-blue-700">
-                      {prescriptionData.medicines?.map((medicine, index) => (
-                        <li key={index}>
-                          {medicine.name} - {medicine.duration}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              )}
+        {/* Main Content */}
+        <div className="glass-panel p-8 rounded-2xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center p-4 rounded-full bg-slate-800/50 mb-4 ring-1 ring-white/10">
+              <QrCode className="w-8 h-8 text-blue-400" />
             </div>
-
-            {/* Hidden element for file scanning */}
-            <div id="file-reader" style={{ display: "none" }}></div>
+            <h2 className="text-2xl font-bold text-slate-100 mb-2">
+              Scan Prescription
+            </h2>
+            <p className="text-slate-400 max-w-md mx-auto">
+              Scan a QR code to view prescription details and verify its authenticity on the blockchain.
+            </p>
           </div>
+
+          {!isScanning && !scanResult && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-lg mx-auto">
+              <button
+                onClick={startScanning}
+                className="flex flex-col items-center justify-center p-8 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 transition-all group"
+              >
+                <Camera className="w-8 h-8 text-blue-400 mb-3 group-hover:scale-110 transition-transform" />
+                <span className="font-semibold text-slate-200">Use Camera</span>
+              </button>
+
+              <div className="relative">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  ref={fileInputRef}
+                  id="file-upload"
+                />
+                <label
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center p-8 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800 transition-all group cursor-pointer h-full"
+                >
+                  <Upload className="w-8 h-8 text-emerald-400 mb-3 group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold text-slate-200">Upload Image</span>
+                </label>
+              </div>
+            </div>
+          )}
+
+          {/* Scanner Container */}
+          {isScanning && (
+            <div className="max-w-md mx-auto overflow-hidden rounded-xl border-2 border-slate-700 bg-black">
+              <div id="reader" className="w-full"></div>
+            </div>
+          )}
+
+          {/* Verification Spinner */}
+          {isVerifying && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-12 h-12 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+              <p className="text-blue-300 font-medium animate-pulse">Verifying on Blockchain...</p>
+            </div>
+          )}
+
+          {/* Results Section */}
+          {(verificationResult || prescriptionData) && !isVerifying && (
+            <div className="mt-8 space-y-6 animate-fade-in">
+              {verificationResult && (
+                <div className={`p-6 rounded-xl border ${verificationResult.isValid
+                    ? 'bg-emerald-500/10 border-emerald-500/20'
+                    : 'bg-red-500/10 border-red-500/20'
+                  }`}>
+                  <div className="flex items-center gap-3 mb-4">
+                    {verificationResult.isValid ? (
+                      <ShieldCheck className="w-8 h-8 text-emerald-400" />
+                    ) : (
+                      <AlertCircle className="w-8 h-8 text-red-400" />
+                    )}
+                    <div>
+                      <h3 className={`text-xl font-bold ${verificationResult.isValid ? 'text-emerald-300' : 'text-red-300'
+                        }`}>
+                        {verificationResult.isValid ? 'Valid Prescription' : 'Invalid Prescription'}
+                      </h3>
+                      <p className={`text-sm ${verificationResult.isValid ? 'text-emerald-400/80' : 'text-red-400/80'
+                        }`}>
+                        {verificationResult.isValid
+                          ? 'Successfully verified on the blockchain'
+                          : verificationResult.error || 'Verification failed'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {verificationResult.isValid && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-emerald-500/10">
+                      <div>
+                        <p className="text-xs text-emerald-400/60 uppercase tracking-wider font-semibold">Status</p>
+                        <p className={`font-medium ${verificationResult.isUsed ? 'text-yellow-400' : 'text-emerald-300'}`}>
+                          {verificationResult.isUsed ? 'Used / Dispensed' : 'Active / Valid'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-emerald-400/60 uppercase tracking-wider font-semibold">Timestamp</p>
+                        <p className="text-emerald-300 font-medium">
+                          {new Date(verificationResult.timestamp * 1000).toLocaleString()}
+                        </p>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <p className="text-xs text-emerald-400/60 uppercase tracking-wider font-semibold">Doctor Address</p>
+                        <p className="text-emerald-300 font-mono text-xs sm:text-sm break-all">
+                          {verificationResult.doctorAddress}
+                        </p>
+                      </div>
+                      {verificationResult.note && (
+                        <div className="sm:col-span-2 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20 text-sm text-blue-300">
+                          {verificationResult.note}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {prescriptionData && (
+                <div className="bg-slate-800/50 rounded-xl border border-white/5 p-6 space-y-6">
+                  <div className="flex items-center gap-2 border-b border-white/5 pb-4">
+                    <User className="w-5 h-5 text-blue-400" />
+                    <h3 className="font-bold text-slate-200">Prescription Details</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8">
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Patient Name</p>
+                      <p className="text-lg text-slate-200">{prescriptionData.patientInfo?.patientName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Patient ID</p>
+                      <p className="text-lg text-slate-200">{prescriptionData.patientInfo?.patientId}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Doctor Name</p>
+                      <p className="text-lg text-slate-200">{prescriptionData.patientInfo?.doctorName}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-1">Date</p>
+                      <p className="text-lg text-slate-200">
+                        {new Date(prescriptionData.timestamp).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-white/5">
+                    <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-3">Medicines</p>
+                    <div className="space-y-2">
+                      {prescriptionData.medicines?.map((medicine, index) => (
+                        <div key={index} className="flex justify-between items-center bg-slate-900/50 p-3 rounded-lg border border-white/5">
+                          <span className="font-medium text-slate-200">{medicine.name}</span>
+                          <span className="text-sm text-slate-400 bg-slate-800 px-2 py-1 rounded">{medicine.duration}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <button
+                onClick={startScanning}
+                className="w-full btn-primary py-3 rounded-xl font-semibold transform hover:-translate-y-1 transition-all"
+              >
+                Scan Another Prescription
+              </button>
+            </div>
+          )}
+
+          <div id="file-reader" style={{ display: "none" }}></div>
         </div>
       </div>
     </div>
@@ -526,4 +380,3 @@ function PatientDashBoard() {
 }
 
 export default PatientDashBoard;
-
